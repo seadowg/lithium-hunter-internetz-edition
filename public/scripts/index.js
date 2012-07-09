@@ -1,23 +1,36 @@
-var ViewManager = {
-  currentViewElement: null,
-  currentViewObject: null,
-  viewObjects: {},
-  showView: function(viewName) {
-    if (this.currentViewElement != null) {
-      this.currentViewElement.hide();
+var TwoFace = {
+  currentFaceElement: null,
+  currentFaceObject: null,
+  faceObjects: {},
+  show: function(faceName) {
+    if (this.currentFaceElement != null) {
+      this.currentFaceElement.hide();
     }
     
-    this.currentViewElement = $('.view.view-' + viewName);
-    this.currentViewObject = this.viewObjects[viewName];
+    this.currentFaceElement = $('.face.face-' + faceName);
+    this.currentFaceObject = this.faceObjects[faceName];
     
-    this.currentViewElement.show();
-    this.currentViewObject.onShow();
+    this.currentFaceElement.show();
+    this.currentFaceObject.onShow();
   },
-  addView: function(viewName, viewObject) {
-    this.viewObjects[viewName] = viewObject;
-    $(document).ready(viewObject.setup);
+  add: function(name, object) {
+    $('.face').hide();
+    
+    this.faceObjects[name] = object;
+    $(document).ready(object.setup);
   }
-}
+};
+
+var TutorialView = {
+  setup: function() {
+    $('#play_button').click(function() {
+      TwoFace.show('play');
+    });
+  },
+  onShow: function() {
+    
+  }
+};
 
 var PlayView = {
   setup: function() {
@@ -26,20 +39,45 @@ var PlayView = {
   		$('#lithium_field').html(Game.lithiums);
 
   		if (result == "WIN") {
-  			ViewManager.showView('win');
+  			TwoFace.show('win');
   		}
 
   		else if (result == "LOSE") {
-  			ViewManager.showView('lose');
+  			TwoFace.show('lose');
   		}
   	});
   },
   onShow: function() {
     Game.reset();
   }
-}
+};
+
+var WinView = {
+  setup: function() {
+    $('#win_play_button').click(function() {
+      TwoFace.show('play');
+    });
+  },
+  onShow: function() {
+    
+  }
+};
+
+var LoseView = {
+  setup: function() {
+    $('#lose_play_button').click(function() {
+      TwoFace.show('play');
+    });
+  },
+  onShow: function() {
+    
+  }
+};
 
 $(document).ready(function() {
-  ViewManager.addView('play', PlayView);
-  ViewManager.showView('play');
+  TwoFace.add('play', PlayView);
+  TwoFace.add('tutorial', TutorialView);
+  TwoFace.add('win', WinView);
+  TwoFace.add('lose', LoseView);
+  TwoFace.show('tutorial');
 });
