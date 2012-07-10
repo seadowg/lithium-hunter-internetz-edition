@@ -1,27 +1,27 @@
 var TwoFace = {
-  currentFaceElement: null,
-  currentFaceObject: null,
-  faceObjects: {},
+  currentFace: null,
+  faces: {},
   show: function(faceName) {
-    if (this.currentFaceElement != null) {
-      this.currentFaceElement.hide();
+    if (this.currentFace != null) {
+      $('.face.face-' + this.currentFace.name).hide();
     }
     
-    this.currentFaceElement = $('.face.face-' + faceName);
-    this.currentFaceObject = this.faceObjects[faceName];
-    
-    this.currentFaceElement.show();
-    this.currentFaceObject.onShow();
+    this.currentFace = this.faces[faceName];
+    $('.face.face-' + this.currentFace.name).show();
+    this.currentFace.onShow();
   },
-  add: function(name, object) {
-    $('.face').hide();
+  define: function(name, object) {
+    object.name = name;
     
-    this.faceObjects[name] = object;
-    $(document).ready(object.setup);
+    this.faces[object.name] = object;
+    $(document).ready(function() {
+      $('.face.face-' + object.name).hide();
+      object.setup(); 
+    });
   }
 };
 
-var TutorialView = {
+TwoFace.define('tutorial', {
   setup: function() {
     $('#play_button').click(function() {
       TwoFace.show('play');
@@ -30,9 +30,9 @@ var TutorialView = {
   onShow: function() {
     
   }
-};
+});
 
-var PlayView = {
+TwoFace.define('play', {
   setup: function() {
   	$('#mine_button').click(function() {
   		var result = Game.mine();
@@ -49,10 +49,11 @@ var PlayView = {
   },
   onShow: function() {
     Game.reset();
+    $('#lithium_field').html(Game.lithiums);
   }
-};
+});
 
-var WinView = {
+TwoFace.define('win', {
   setup: function() {
     $('#win_play_button').click(function() {
       TwoFace.show('play');
@@ -61,9 +62,9 @@ var WinView = {
   onShow: function() {
     
   }
-};
+});
 
-var LoseView = {
+TwoFace.define('lose', {
   setup: function() {
     $('#lose_play_button').click(function() {
       TwoFace.show('play');
@@ -72,12 +73,8 @@ var LoseView = {
   onShow: function() {
     
   }
-};
+});
 
 $(document).ready(function() {
-  TwoFace.add('play', PlayView);
-  TwoFace.add('tutorial', TutorialView);
-  TwoFace.add('win', WinView);
-  TwoFace.add('lose', LoseView);
   TwoFace.show('tutorial');
 });
